@@ -1,20 +1,44 @@
 <template>
-  <div class="tab-bar-item">
-    <!--   <img src="../../assets/img/tabbar/home.svg" alt="" />
-    <div>首页</div> -->
+  <div class="tab-bar-item" @click="itemClick">
     <!-- 动态决定图片和文字 -->
     <div v-if="!isActive"><slot name="item-icon"></slot></div>
     <div v-else><slot name="item-icon-active"></slot></div>
-    <div :class="{ active: isActive }"><slot name="item-text"></slot></div>
+    <div :style="activeStyle"><slot name="item-text"></slot></div>
   </div>
 </template>
 <script>
 export default {
   name: "TabBarItem",
+  // 由其他传入点击的哪个item
+  props: {
+    path: {
+      type: String,
+    },
+    activeColor: {
+      type: String,
+      default: "red",
+    },
+  },
   data() {
     return {
-      isActive: true,
+      // isActive: true,
     };
+  },
+  computed: {
+    // 动态决定isActive为true还是false
+    isActive() {
+      // indexOf:返回要查找的项的位置，没找到的情况下返回-1
+      return this.$route.path.indexOf(this.path) !== -1;
+    },
+    activeStyle() {
+      return this.isActive ? { color: this.activeColor } : {};
+    },
+  },
+  methods: {
+    itemClick() {
+      // 不同的item跳转的不一样
+      this.$router.replace(this.path);
+    },
   },
 };
 </script>
@@ -30,8 +54,5 @@ export default {
   height: 24px;
   margin-top: 3px;
   vertical-align: middle;
-}
-.active {
-  color: red;
 }
 </style>
